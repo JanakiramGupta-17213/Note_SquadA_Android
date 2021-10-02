@@ -1,9 +1,14 @@
 package com.example.notes_squada;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -13,6 +18,8 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CategoriesActivity extends AppCompatActivity {
 
@@ -20,7 +27,7 @@ public class CategoriesActivity extends AppCompatActivity {
     RecyclerView rv_cat;
     EditText et_catname;
     FloatingActionButton fab_addcat;
-    ArrayList<String> catnames = new ArrayList<String>();
+    ArrayList<String> catnames;
 
     LinearLayout ll_createcat;
 
@@ -30,6 +37,18 @@ public class CategoriesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_categories);
 
         getSupportActionBar().setTitle("Categories");
+
+        SharedPreferences pref = getSharedPreferences("Cat_Pref",MODE_PRIVATE);
+        Set<String> fetchcat = pref.getStringSet("Cat_List",null);
+
+        if(fetchcat == null)
+        {
+            catnames = new ArrayList<String>();
+        }
+        else
+        {
+            catnames = new ArrayList<String>(fetchcat);
+        }
 
         tv_cattext = findViewById(R.id.tv_cattext);
 
@@ -45,6 +64,8 @@ public class CategoriesActivity extends AppCompatActivity {
 
         ll_createcat = findViewById(R.id.ll_createcat);
 
+
+
         if(catnames.isEmpty())
         {
             tv_cattext.setVisibility(View.VISIBLE);
@@ -54,8 +75,32 @@ public class CategoriesActivity extends AppCompatActivity {
             tv_cattext.setVisibility(View.GONE);
         }
 
+        //Setting Layout Manager
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        rv_cat.setLayoutManager(layoutManager);
+
+        //Setting Adapter
         CatListAdapter adapter = new CatListAdapter(catnames);
         rv_cat.setAdapter(adapter);
+
+        //Drawing Border for itemviews
+        rv_cat.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                super.onDrawOver(c, parent, state);
+                Paint pdraw = new Paint(Paint.ANTI_ALIAS_FLAG);
+                pdraw.setColor(Color.BLACK);
+                pdraw.setStyle(Paint.Style.STROKE);
+                pdraw.setStrokeWidth(2);
+
+                int count = parent.getChildCount();
+                for (int i =0; i<count; i++)
+                {
+                    View view = parent.getChildAt(i);
+                    c.drawRect(view.getLeft() + 10,view.getTop() + 10,view.getRight() - 10,view.getBottom() - 10,pdraw);
+                }
+            }
+        });
 
         fab_addcat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +122,11 @@ public class CategoriesActivity extends AppCompatActivity {
                 else
                 {
                     catnames.add(et_catname.getText().toString());
-                    adapter.notifyDataSetChanged();
+                    SharedPreferences.Editor editor = getSharedPreferences("Cat_Pref",MODE_PRIVATE).edit();
+                    Set<String> setcat = new HashSet<String>();
+                    setcat.addAll(catnames);
+                    editor.putStringSet("Cat_List",setcat);
+                    editor.apply();
 
                     finish();
                     startActivity(getIntent());
