@@ -24,8 +24,7 @@ public class CategoriesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
-
-         getSupportActionBar().setTitle("Categories");
+        getSupportActionBar().setTitle("Categories");
 
         tv_cattext = findViewById(R.id.tv_cattext);
 
