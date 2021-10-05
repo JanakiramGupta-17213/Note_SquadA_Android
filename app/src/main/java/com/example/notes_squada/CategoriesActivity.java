@@ -83,25 +83,6 @@ public class CategoriesActivity extends AppCompatActivity {
         CatListAdapter adapter = new CatListAdapter(catnames);
         rv_cat.setAdapter(adapter);
 
-        //Drawing Border for itemviews
-        rv_cat.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                super.onDrawOver(c, parent, state);
-                Paint pdraw = new Paint(Paint.ANTI_ALIAS_FLAG);
-                pdraw.setColor(Color.BLACK);
-                pdraw.setStyle(Paint.Style.STROKE);
-                pdraw.setStrokeWidth(2);
-
-                int count = parent.getChildCount();
-                for (int i =0; i<count; i++)
-                {
-                    View view = parent.getChildAt(i);
-                    c.drawRect(view.getLeft() + 10,view.getTop() + 10,view.getRight() - 10,view.getBottom() - 10,pdraw);
-                }
-            }
-        });
-
         fab_addcat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

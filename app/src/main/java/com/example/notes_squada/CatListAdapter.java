@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.viewhold
 
     @Override
     public void onBindViewHolder(@NonNull viewholder holder, int position) {
-        holder.tv_catitem.setText(catnames.get(position));
+        holder.tv_catitemtext.setText(catnames.get(position));
     }
 
     @Override
@@ -39,11 +40,11 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.viewhold
     {
         //Creating References for TextView
 
-        TextView tv_catitem;
+        TextView tv_catitemtext;
 
         public viewholder(@NonNull View itemView) {
             super(itemView);
-            tv_catitem = itemView.findViewById(R.id.tv_catitem);
+            tv_catitemtext = itemView.findViewById(R.id.tv_catitemtext);
         }
     }
 }
