@@ -1,5 +1,6 @@
 package com.example.notes_squada;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,11 +41,22 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.viewhold
     {
         //Creating References for TextView
 
+        CardView tv_catitem;
         TextView tv_catitemtext;
 
         public viewholder(@NonNull View itemView) {
             super(itemView);
             tv_catitemtext = itemView.findViewById(R.id.tv_catitemtext);
+            tv_catitem = itemView.findViewById(R.id.tv_catitem);
+
+            tv_catitem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(itemView.getContext(),NotesListActivity.class);
+                    intent.putExtra("Category",catnames.get(getAdapterPosition()));
+                    itemView.getContext().startActivity(intent);
+                }
+            });
         }
     }
 }
