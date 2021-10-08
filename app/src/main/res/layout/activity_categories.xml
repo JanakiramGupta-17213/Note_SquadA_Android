@@ -108,6 +108,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="10dp"
-        />
+        app:fabSize="mini"
+        android:scaleType="center"
+        android:src="@drawable/cat_add"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
