@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -102,8 +103,29 @@ public class CategoriesActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                categories.remove(viewHolder.getAdapterPosition());
-                adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                AlertDialog.Builder alert = new AlertDialog.Builder(CategoriesActivity.this);
+                alert.setTitle("Delete Category");
+                alert.setMessage("Do you want to delete category: "+categories.get(viewHolder.getAdapterPosition()));
+                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        categoryDatabase.categoryDao().deleteCategory(catnames.get(viewHolder.getAdapterPosition()));
+                        catnames.remove(viewHolder.getAdapterPosition());
+                        categories.remove(viewHolder.getAdapterPosition());
+                        adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                        catnames = categoryDatabase.categoryDao().getAllCategories();
+                        categories = categoryDatabase.categoryDao().getCategorynames();
+                    }
+                });
+                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                alert.create().show();
+
             }
         };
         ItemTouchHelper ith = new ItemTouchHelper(itsc);
