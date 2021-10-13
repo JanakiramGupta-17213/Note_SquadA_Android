@@ -114,4 +114,57 @@ public class AudioRecord {
         playBtn.setEnabled(true);
     }
 
+    private void startRecording() {
+        recordingThread = new AudioRecordingThread(fileName, new AudioRecordingHandler() {
+            @Override
+            public void onFftDataCapture(final byte[] bytes) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        if (visualizerView != null) {
+                            visualizerView.updateVisualizerFFT(bytes);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onRecordSuccess() {}
+
+            @Override
+            public void onRecordingError() {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        recordStop();
+                        NotificationUtils.showInfoDialog(AudioRecordingActivity.this, getString(R.string.recordingError));
+                    }
+                });
+            }
+
+            @Override
+            public void onRecordSaveError() {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        recordStop();
+                        NotificationUtils.showInfoDialog(AudioRecordingActivity.this, getString(R.string.saveRecordError));
+                    }
+                });
+            }
+        });
+        recordingThread.start();
+    }
+
+    private void stopRecording() {
+        if (recordingThread != null) {
+            recordingThread.stopRecording();
+            recordingThread = null;
+        }
+    }
+
+    private void play() {
+        Intent i = new Intent(AudioRecordingActivity.this, AudioPlaybackActivity.class);
+        i.putExtra(VideoPlaybackActivity.FileNameArg, fileName);
+        startActivityForResult(i, 0);
+    }
+}
+
 }
