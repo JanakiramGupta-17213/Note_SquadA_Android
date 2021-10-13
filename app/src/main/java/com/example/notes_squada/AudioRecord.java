@@ -61,6 +61,57 @@ public class AudioRecord {
         setupVisualizer();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
 
+        recordStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        recordStop();
+        releaseVisualizer();
+
+        super.onDestroy();
+    }
+
+    private void setupVisualizer() {
+        Paint paint = new Paint();
+        paint.setStrokeWidth(5f);
+        paint.setAntiAlias(true);
+        paint.setColor(Color.argb(200, 227, 69, 53));
+        BarGraphRenderer barGraphRendererBottom = new BarGraphRenderer(2, paint, false);
+        visualizerView.addRenderer(barGraphRendererBottom);
+    }
+
+
+    private void releaseVisualizer() {
+        visualizerView.release();
+        visualizerView = null;
+    }
+
+    private void record() {
+        if (startRecording) {
+            recordStart();
+        }
+        else {
+            recordStop();
+        }
+    }
+
+    private void recordStart() {
+        startRecording();
+        startRecording = false;
+        recordBtn.setText(R.string.stopRecordBtn);
+        playBtn.setEnabled(false);
+    }
+
+    private void recordStop() {
+        stopRecording();
+        startRecording = true;
+        recordBtn.setText(R.string.recordBtn);
+        playBtn.setEnabled(true);
+    }
 
 }
