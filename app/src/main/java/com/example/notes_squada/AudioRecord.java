@@ -60,4 +60,27 @@ public class AudioRecord {
         visualizerView = (VisualizerView) findViewById(R.id.visualizerView);
         setupVisualizer();
     }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        recordStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        recordStop();
+        releaseVisualizer();
+
+        super.onDestroy();
+    }
+
+
+    private void releaseVisualizer() {
+        visualizerView.release();
+        visualizerView = null;
+    }
+
 }
