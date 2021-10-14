@@ -40,13 +40,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class NotesEntryActivity extends AppCompatActivity {
+EEpublic class NotesEntryActivity extends AppCompatActivity implements LocationListener {
 
-    EditText et_title,et_description;
+    EditText et_title, et_description;
 
-    ImageView imv_voice,imv_image;
+    ImageView imv_voice, imv_image;
 
-    Button btn_image,btn_save;
+    Button btn_image, btn_save, btn_stoprecording;
 
     NotesDatabase notesDatabase;
 
@@ -57,7 +57,7 @@ public class NotesEntryActivity extends AppCompatActivity {
     List<String> notes_title = new ArrayList<String>();
 
     int id;
-    String title,description,category,date,audiopath,videopath,latitude,longitude;
+    String title, description, category, date, audiopath, imagepath, latitude, longitude;
 
     ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -74,6 +74,7 @@ public class NotesEntryActivity extends AppCompatActivity {
                     }
                 }
             });
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,16 +115,16 @@ public class NotesEntryActivity extends AppCompatActivity {
 
         btn_image = findViewById(R.id.btn_image);
         btn_save = findViewById(R.id.btn_save);
+        btn_stoprecording = findViewById(R.id.btn_stoprecording);
 
-        notesDatabase = Room.databaseBuilder(this,NotesDatabase.class,"notes").allowMainThreadQueries().build();
+        notesDatabase = Room.databaseBuilder(getApplicationContext(), NotesDatabase.class, "notes").allowMainThreadQueries().build();
         List<Integer> idlist = notesDatabase.notesDao().getallid();
 
-        if(idlist.isEmpty())
-        {
+        notes_title = notesDatabase.notesDao().getalltitles();
+
+        if (idlist.isEmpty()) {
             id = 1;
-        }
-        else
-        {
+        } else {
             id = idlist.get(idlist.size() - 1) + 1;
         }
 
@@ -154,24 +155,58 @@ public class NotesEntryActivity extends AppCompatActivity {
                 });
 
                 System.out.println("file name : "+audiopath);
-
             }
         });
 
         btn_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.
+                        Media.EXTERNAL_CONTENT_URI);
+                someActivityResultLauncher.launch(intent);
             }
         });
 
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                List<String> uniqtitle = new ArrayList<>();
+                Set<String> titleuniq = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+                titleuniq.addAll(notes_title);
+                uniqtitle.addAll(titleuniq);
 
+                if (et_title.getText().toString().equals("")) {
+                    et_title.setError("Please enter a title");
+                }
+                else if(uniqtitle.contains(et_title.getText().toString().toLowerCase()))
+                {
+                    et_title.setError("Title already exists");
+                }
+                else if (et_description.getText().toString().equals("")) {
+                    et_description.setError("Please enter description");
+                }
+
+                else {
+                    System.out.println(date);
+                    title = et_title.getText().toString();
+                    description = et_description.getText().toString();
+                    if(!(new File(audiopath).exists()))
+                    {
+                        audiopath="empty";
+                    }
+                    if(imv_image.getDrawable() == null)
+                    {
+                        imagepath="empty";
+                    }
+
+                    Notes notes = new Notes(id,title,description,category,String.valueOf(date),latitude,
+                            longitude,audiopath,imagepath);
+
+                    notesDatabase.notesDao().InsertNotes(notes);
+                    finish();
+                }
             }
         });
-
 
     }
 
@@ -198,6 +233,4 @@ public class NotesEntryActivity extends AppCompatActivity {
 
         System.out.println("location is :"+latitude+"/"+longitude);
     }
-}
-
 }
