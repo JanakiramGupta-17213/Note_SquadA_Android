@@ -19,8 +19,8 @@ import java.util.List;
 public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.viewholder> {
 
     List<String> notes_title;
-    List<Date> date;
-    public NotesListAdapter(List<String> notes_title, List<Date> date)
+    List<String> date;
+    public NotesListAdapter(List<String> notes_title, List<String> date)
     {
         this.notes_title = notes_title;
         this.date = date;
