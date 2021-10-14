@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.notes_squada.Adapters.NotesListAdapter;
 import com.example.notes_squada.Database.NotesDatabase;
@@ -49,6 +51,14 @@ public class NotesListActivity extends AppCompatActivity {
 
         rv_notes.setLayoutManager(layoutManager);
         rv_notes.setAdapter(notesListAdapter);
+
+        fab_addnotes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(NotesListActivity.this,NotesEntryActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
