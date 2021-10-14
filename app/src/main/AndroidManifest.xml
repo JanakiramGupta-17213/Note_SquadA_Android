@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Notes_SquadA">
         <activity
+            android:name=".NotesEntryActivity"
+            android:exported="true" />
+        <activity
+            android:name=".NotesDisplayActivity"
+            android:exported="true" />
+        <activity
             android:name=".NotesListActivity"
             android:exported="true" />
         <activity

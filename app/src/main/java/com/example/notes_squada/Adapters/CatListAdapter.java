@@ -1,4 +1,4 @@
-package com.example.notes_squada;
+package com.example.notes_squada.Adapters;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -10,14 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.example.notes_squada.NotesListActivity;
+import com.example.notes_squada.R;
+
+import java.util.List;
 
 public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.viewholder> {
 
-    ArrayList<String> catnames = new ArrayList<String>();
-    public CatListAdapter(ArrayList<String> catnames)
+    List<String> categories;
+    public CatListAdapter(List<String> categories)
     {
-        this.catnames = catnames;
+        this.categories = categories;
     }
 
     @NonNull
@@ -29,12 +32,12 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.viewhold
 
     @Override
     public void onBindViewHolder(@NonNull viewholder holder, int position) {
-        holder.tv_catitemtext.setText(catnames.get(position));
+        holder.tv_catitemtext.setText(categories.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return catnames.size();
+        return categories.size();
     }
 
     public class viewholder extends RecyclerView.ViewHolder
@@ -42,18 +45,19 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.viewhold
         //Creating References for TextView
 
         CardView tv_catitem;
-        TextView tv_catitemtext;
+        TextView tv_catitemtext,tv_catitemsubtext;
 
         public viewholder(@NonNull View itemView) {
             super(itemView);
             tv_catitemtext = itemView.findViewById(R.id.tv_catitemtext);
+            tv_catitemsubtext = itemView.findViewById(R.id.tv_catitemsubtext);
             tv_catitem = itemView.findViewById(R.id.tv_catitem);
 
             tv_catitem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(itemView.getContext(),NotesListActivity.class);
-                    intent.putExtra("Category",catnames.get(getAdapterPosition()));
+                    Intent intent = new Intent(itemView.getContext(), NotesListActivity.class);
+                    intent.putExtra("Category",categories.get(getAdapterPosition()));
                     itemView.getContext().startActivity(intent);
                 }
             });
