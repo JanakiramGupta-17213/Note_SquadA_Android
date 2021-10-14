@@ -42,9 +42,13 @@ public class NotesListActivity extends AppCompatActivity {
         rv_notes = findViewById(R.id.rv_notes);
         fab_addnotes = findViewById(R.id.fab_addnotes);
 
-        notesDatabase = Room.databaseBuilder(this,NotesDatabase.class,"notes").allowMainThreadQueries().build();
-        notes_title = notesDatabase.notesDao().gettitles();
-        notes_dates = notesDatabase.notesDao().getdates();
+        notesDatabase = Room.databaseBuilder(getApplicationContext(),NotesDatabase.class,"notes").allowMainThreadQueries().build();
+
+        allnotes = notesDatabase.notesDao().getallnotesbycategory(Category);
+
+        notes_title = notesDatabase.notesDao().gettitlesbycategory(Category);
+        notes_dates = notesDatabase.notesDao().getdatesbycategory(Category);
+        notes_id = notesDatabase.notesDao().getallidbycategory(Category);
 
         notesListAdapter = new NotesListAdapter(notes_title,notes_dates);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);

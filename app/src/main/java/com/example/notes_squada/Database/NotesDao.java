@@ -18,8 +18,14 @@ public interface NotesDao {
     @Query("SELECT title FROM notes")
     List<String> gettitles();
 
-    @Query("SELECT date FROM notes")
-    List<Date> getdates();
+    @Query("SELECT id FROM notes WHERE category IN (:categoryname)")
+    List<Integer> getallidbycategory(String categoryname);
+
+    @Query("SELECT title FROM notes WHERE category IN (:categoryname)")
+    List<String> gettitlesbycategory(String categoryname);
+
+    @Query("SELECT date FROM notes WHERE category IN (:categoryname)")
+    List<String> getdatesbycategory(String categoryname);
 
     @Query("SELECT category FROM notes")
     List<String> getcategories();
