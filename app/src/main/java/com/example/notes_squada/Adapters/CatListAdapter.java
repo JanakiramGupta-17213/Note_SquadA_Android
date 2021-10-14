@@ -1,4 +1,4 @@
-package com.example.notes_squada;
+package com.example.notes_squada.Adapters;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notes_squada.Database.Categories;
+import com.example.notes_squada.NotesListActivity;
+import com.example.notes_squada.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.viewholder> {
@@ -56,7 +56,7 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.viewhold
             tv_catitem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(itemView.getContext(),NotesListActivity.class);
+                    Intent intent = new Intent(itemView.getContext(), NotesListActivity.class);
                     intent.putExtra("Category",categories.get(getAdapterPosition()));
                     itemView.getContext().startActivity(intent);
                 }
