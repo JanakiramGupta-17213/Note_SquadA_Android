@@ -158,20 +158,15 @@ public class NotesEntryActivity extends AppCompatActivity implements LocationLis
             }
         });
 
-        public void onClick() {
-            ImageCapture.OutputFileOptions outputFileOptions =
-                    new ImageCapture.OutputFileOptions.Builder(new File(...)).build();
-            imageCapture.takePicture(outputFileOptions, cameraExecutor,
-                    new ImageCapture.OnImageSavedCallback() {
-                        @Override
-                        public void onImageSaved(ImageCapture.OutputFileResults outputFileResults) {
-                        }
-                        @Override
-                        public void onError(ImageCaptureException error) {
-                        }
-                    }
-            );
-        }
+        btn_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.
+                        Media.EXTERNAL_CONTENT_URI);
+                someActivityResultLauncher.launch(intent);
+            }
+        });
+
 
 
         btn_save.setOnClickListener(new View.OnClickListener() {
