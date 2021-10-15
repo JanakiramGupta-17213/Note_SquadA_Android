@@ -15,11 +15,14 @@ public class Notes {
     @ColumnInfo(name = "title")
     public String title;
 
+    @ColumnInfo(name = "description")
+    public String description;
+
     @ColumnInfo(name = "category")
     public String category;
 
     @ColumnInfo(name ="date")
-    public Date date;
+    public String date;
 
     @ColumnInfo(name = "latitude")
     public String latitude;
@@ -33,16 +36,17 @@ public class Notes {
     @ColumnInfo(name = "imagepath")
     public String imagepath;
 
-    public Notes(int id, String title, String catergory, Date date, String latitude,
-                 String longitude, String audipath, String imagepath)
+    public Notes(int id, String title, String description, String category, String date, String latitude,
+                 String longitude, String audiopath, String imagepath)
     {
         this.id = id;
         this.title = title;
-        this.category = catergory;
+        this.description = description;
+        this.category = category;
         this.date = date;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.audiopath = audipath;
+        this.audiopath = audiopath;
         this.imagepath = imagepath;
     }
 
@@ -58,7 +62,11 @@ public class Notes {
         return category;
     }
 
-    public Date getDate() {
+    public String getDescription() {
+        return description;
+    }
+
+    public String getDate() {
         return date;
     }
 
@@ -76,5 +84,9 @@ public class Notes {
 
     public String getImagepath() {
         return imagepath;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

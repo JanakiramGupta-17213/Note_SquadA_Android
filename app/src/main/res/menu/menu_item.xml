@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/sort_title" android:icon="@drawable/sort_title" app:showAsAction="always"
+        tools:ignore="MenuTitle"/>
+
+    <item android:id="@+id/sort_date" android:icon="@drawable/sort_date" app:showAsAction="ifRoom"
+        tools:ignore="MenuTitle" />
+
+</menu>

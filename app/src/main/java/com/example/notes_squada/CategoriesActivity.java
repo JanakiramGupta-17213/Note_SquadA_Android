@@ -3,29 +3,26 @@ package com.example.notes_squada;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import android.Manifest;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.notes_squada.Adapters.CatListAdapter;
 import com.example.notes_squada.Database.Categories;
 import com.example.notes_squada.Database.CategoryDatabase;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -42,16 +39,27 @@ public class CategoriesActivity extends AppCompatActivity {
 
     CategoryDatabase categoryDatabase;
 
-    List<String> categories;
+    List<String> categories = new ArrayList<String>();
+
 
     int id;
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
 
         getSupportActionBar().setTitle("Categories");
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.RECORD_AUDIO}, 1);
 
         categoryDatabase = Room.databaseBuilder(getApplicationContext(), CategoryDatabase.class,"category").allowMainThreadQueries().build();
 
@@ -103,29 +111,34 @@ public class CategoriesActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(CategoriesActivity.this);
-                alert.setTitle("Delete Category");
-                alert.setMessage("Do you want to delete category: "+categories.get(viewHolder.getAdapterPosition()));
-                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        categoryDatabase.categoryDao().deleteCategory(catnames.get(viewHolder.getAdapterPosition()));
-                        catnames.remove(viewHolder.getAdapterPosition());
-                        categories.remove(viewHolder.getAdapterPosition());
-                        adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-                        catnames = categoryDatabase.categoryDao().getAllCategories();
-                        categories = categoryDatabase.categoryDao().getCategorynames();
-                    }
-                });
-                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-                alert.create().show();
 
+                TextView subtext = viewHolder.itemView.findViewById(R.id.tv_catitemsubtext);
+
+                int count = Integer.parseInt(subtext.getText().toString());
+
+                if(count > 0) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(CategoriesActivity.this);
+                    alert.setTitle("Delete Category");
+                    alert.setMessage("Category Should be Empty to be deleted");
+                    alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+
+                    alert.create().show();
+                    adapter.notifyDataSetChanged();
+                }
+                else if(count == 0)
+                {
+                    categoryDatabase.categoryDao().deleteCategory(catnames.get(viewHolder.getAdapterPosition()));
+                    catnames.remove(viewHolder.getAdapterPosition());
+                    categories.remove(viewHolder.getAdapterPosition());
+                    adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                    catnames = categoryDatabase.categoryDao().getAllCategories();
+                    categories = categoryDatabase.categoryDao().getCategorynames();
+                }
             }
         };
         ItemTouchHelper ith = new ItemTouchHelper(itsc);
@@ -177,12 +190,6 @@ public class CategoriesActivity extends AppCompatActivity {
         tv_catcancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tv_cattext.setVisibility(View.VISIBLE);
-                rv_cat.setVisibility(View.VISIBLE);
-                fab_addcat.setVisibility(View.VISIBLE);
-
-                ll_createcat.setVisibility(View.GONE);
-
                 finish();
                 startActivity(getIntent());
             }

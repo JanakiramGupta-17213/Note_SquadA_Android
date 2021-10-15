@@ -1,4 +1,4 @@
-package com.example.notes_squada;
+package com.example.notes_squada.Adapters;
 
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -9,15 +9,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
-import com.example.notes_squada.Database.Categories;
+import com.example.notes_squada.Database.Notes;
+import com.example.notes_squada.Database.NotesDatabase;
+import com.example.notes_squada.NotesListActivity;
+import com.example.notes_squada.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.viewholder> {
 
     List<String> categories;
+    NotesDatabase notesDatabase;
+
     public CatListAdapter(List<String> categories)
     {
         this.categories = categories;
@@ -32,7 +37,9 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.viewhold
 
     @Override
     public void onBindViewHolder(@NonNull viewholder holder, int position) {
+        List<Integer> notes_id = notesDatabase.notesDao().getallidbycategory(categories.get(position));
         holder.tv_catitemtext.setText(categories.get(position));
+        holder.tv_catitemsubtext.setText(String.valueOf(notes_id.size()));
     }
 
     @Override
@@ -53,10 +60,12 @@ public class CatListAdapter extends RecyclerView.Adapter<CatListAdapter.viewhold
             tv_catitemsubtext = itemView.findViewById(R.id.tv_catitemsubtext);
             tv_catitem = itemView.findViewById(R.id.tv_catitem);
 
+            notesDatabase = Room.databaseBuilder(itemView.getContext(), NotesDatabase.class,"notes").allowMainThreadQueries().build();
+
             tv_catitem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(itemView.getContext(),NotesListActivity.class);
+                    Intent intent = new Intent(itemView.getContext(), NotesListActivity.class);
                     intent.putExtra("Category",categories.get(getAdapterPosition()));
                     itemView.getContext().startActivity(intent);
                 }
