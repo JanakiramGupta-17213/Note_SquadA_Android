@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-EEpublic class NotesEntryActivity extends AppCompatActivity implements LocationListener {
+public class NotesEntryActivity extends AppCompatActivity implements LocationListener {
 
     EditText et_title, et_description;
 

@@ -6,7 +6,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import java.util.Date;
 import java.util.List;
 
 @Dao
@@ -15,8 +14,17 @@ public interface NotesDao {
     @Query("SELECT * FROM notes")
     List<Notes> getallnotes();
 
+    @Query("SELECT * FROM notes WHERE id IN (:notesid)")
+    Notes getnotesbyid(int notesid);
+
+    @Query("SELECT * FROM notes WHERE category IN (:categoryname)")
+    List<Notes> getallnotesbycategory(String categoryname);
+
+    @Query("SELECT id FROM notes")
+    List<Integer> getallid();
+
     @Query("SELECT title FROM notes")
-    List<String> gettitles();
+    List<String> getalltitles();
 
     @Query("SELECT id FROM notes WHERE category IN (:categoryname)")
     List<Integer> getallidbycategory(String categoryname);
@@ -26,9 +34,6 @@ public interface NotesDao {
 
     @Query("SELECT date FROM notes WHERE category IN (:categoryname)")
     List<String> getdatesbycategory(String categoryname);
-
-    @Query("SELECT category FROM notes")
-    List<String> getcategories();
 
     @Insert
     void InsertNotes(Notes notes);

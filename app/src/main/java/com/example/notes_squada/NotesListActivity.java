@@ -13,16 +13,20 @@ import androidx.room.Room;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.example.notes_squada.Adapters.NotesListAdapter;
 import com.example.notes_squada.Database.Notes;
 import com.example.notes_squada.Database.NotesDatabase;
+import com.example.notes_squada.Models.NotesData;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class NotesListActivity extends AppCompatActivity {
@@ -39,7 +43,12 @@ public class NotesListActivity extends AppCompatActivity {
     List<String> notes_dates = new ArrayList<String>();
     List<Integer> notes_id = new ArrayList<Integer>();
 
+    List<NotesData> notesDataList = new ArrayList<NotesData>();
+
     NotesListAdapter notesListAdapter;
+
+    int titlesort = 2;
+    int datesort = 2;
 
     @Override
     protected void onRestart() {
@@ -70,6 +79,8 @@ public class NotesListActivity extends AppCompatActivity {
         notes_dates = notesDatabase.notesDao().getdatesbycategory(Category);
         notes_id = notesDatabase.notesDao().getallidbycategory(Category);
 
+        loadData();
+
         notesListAdapter = new NotesListAdapter(notes_title,notes_dates,notes_id);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
 
@@ -87,8 +98,6 @@ public class NotesListActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int index = viewHolder.getAdapterPosition();
                 String name = notes_title.get(index);
-                int id = notes_id.get(index);
-                String date = notes_dates.get(index);
                 Notes note = allnotes.get(index);
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(NotesListActivity.this);
@@ -98,9 +107,8 @@ public class NotesListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         notesDatabase.notesDao().DeleteNotes(note);
-                        notes_title.remove(index);
-                        notes_dates.remove(index);
-                        notes_id.remove(index);
+                        notesDataList.remove(index);
+                        dataReload();
                         notesListAdapter.notifyItemRemoved(index);
                     }
                 });
@@ -112,10 +120,6 @@ public class NotesListActivity extends AppCompatActivity {
                     }
                 });
                 alert.create().show();
-
-
-
-
             }
         };
 
@@ -148,12 +152,103 @@ public class NotesListActivity extends AppCompatActivity {
 
     }
 
+    public void loadData()
+    {
+        notesDataList.clear();
+        for(int i =0; i < notes_id.size(); i++)
+        {
+            NotesData notesData = new NotesData(notes_id.get(i),notes_title.get(i),notes_dates.get(i));
+            notesDataList.add(notesData);
+            System.out.println(notesData.getDate());
+        }
+    }
+
+    public void dataReload()
+    {
+        notes_id.clear();
+        notes_title.clear();
+        notes_dates.clear();
+        for(int i =0; i < notesDataList.size(); i++)
+        {
+            notes_id.add(notesDataList.get(i).getId());
+            notes_title.add(notesDataList.get(i).getTitle());
+            notes_dates.add(notesDataList.get(i).getDate());
+        }
+    }
+
+    public void sortTitle()
+    {
+        if(titlesort == 2)
+        {
+            Collections.sort(notesDataList, new Comparator<NotesData>() {
+                @Override
+                public int compare(NotesData notesData, NotesData t1) {
+                    return notesData.getTitle().compareTo(t1.getTitle());
+                }
+            });
+            titlesort = 1;
+        }
+        else if(titlesort == 1)
+        {
+            Collections.sort(notesDataList, new Comparator<NotesData>() {
+                @Override
+                public int compare(NotesData notesData, NotesData t1) {
+                    return notesData.getTitle().compareTo(t1.getTitle());
+                }
+            });
+            Collections.reverse(notesDataList);
+            titlesort = 2;
+        }
+        dataReload();
+        notesListAdapter.notifyDataSetChanged();
+    }
+
+    public void sortDate()
+    {
+        if(datesort == 2)
+        {
+            Collections.sort(notesDataList, new Comparator<NotesData>() {
+                @Override
+                public int compare(NotesData notesData, NotesData t1) {
+                    return notesData.getDate().compareTo(t1.getDate());
+                }
+            });
+            datesort = 1;
+        }
+        else if(datesort == 1)
+        {
+            Collections.sort(notesDataList, new Comparator<NotesData>() {
+                @Override
+                public int compare(NotesData notesData, NotesData t1) {
+                    return notesData.getDate().compareTo(t1.getDate());
+                }
+            });
+            Collections.reverse(notesDataList);
+            datesort = 2;
+        }
+        dataReload();
+        notesListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_item,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId())
         {
             case android.R.id.home:
                 finish();
+                break;
+            case R.id.sort_title:
+                sortTitle();
+                break;
+            case R.id.sort_date:
+                sortDate();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
